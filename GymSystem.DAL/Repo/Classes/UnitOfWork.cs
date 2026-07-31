@@ -1,4 +1,5 @@
-﻿using GymSystem.DAL.Models;
+﻿using GymManagementDAL.Repositories.Interfaces;
+using GymSystem.DAL.Models;
 using GymSystem.DAL.Repo.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,15 +11,19 @@ namespace GymSystem.DAL.Repo.Classes
 {
     public class UnitOfWork : IUnitOfWork
     {
+        public IMembershipRepository MembershipRepository { get; }
+        public ISessionRepo SessionRepository { get; }
+
+        public IBookingRepository BookingRepository { get; }
         private readonly GymAppContext _context;
         private readonly Dictionary<string, object> _repos = new Dictionary<string, object>();
 
-        public ISessionRepo SessionRepository { get; }
-
-        public UnitOfWork(GymAppContext context, ISessionRepo sessionRepository)
+        public UnitOfWork(GymAppContext context, ISessionRepo sessionRepository, IMembershipRepository membershipRepository, IBookingRepository bookingRepository)
         {
             _context = context;
             SessionRepository = sessionRepository;
+            MembershipRepository = membershipRepository;
+            BookingRepository = bookingRepository;
         }
         public IGenericRepo<TEntity> GetRepo<TEntity>() where TEntity : BaseEntity, new()
         {

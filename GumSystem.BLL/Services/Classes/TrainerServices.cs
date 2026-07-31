@@ -30,7 +30,7 @@ namespace GymSystem.BLL.Services.Classes
 
         public async Task<IEnumerable<TrainerVM>> GetAllTrainersAsync(CancellationToken ct = default)
         {
-            var trainers = await _UnitOfWork.GetRepo<Trainer>().GetAllAsync(ct: ct);
+            var trainers = await _UnitOfWork.GetRepo<Trainer>().GetAllAsync(false, ct: ct);
 
             if (!trainers.Any()) return [];
 

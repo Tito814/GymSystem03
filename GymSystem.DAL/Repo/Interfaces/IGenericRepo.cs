@@ -20,6 +20,8 @@ namespace GymSystem.DAL.Repo.Interfaces
         void UpdateAsync(TEntity entity);
         // Delete
         void DeleteAsync(TEntity entity);
+        Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default);
+        Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null, bool tracking = false, CancellationToken ct = default);
 
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression, CancellationToken ct = default);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression, bool tracking = false, CancellationToken ct = default);

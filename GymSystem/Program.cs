@@ -1,8 +1,10 @@
 using GymSystem.BLL.Profiles;
 using GymSystem.BLL.Services.Classes;
 using GymSystem.BLL.Services.Interfaces;
+using GymSystem.DAL.Models;
 using GymSystem.DAL.Repo.Classes;
 using GymSystem.DAL.Repo.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymSystem
@@ -23,6 +25,26 @@ namespace GymSystem
             builder.Services.AddDbContext<GymAppContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfiles()));
+            builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+
+            builder.Services.AddIdentity<AppUser, IdentityRole>(Config =>
+            {
+                // defualt password settings
+                //Config.Password.RequireLowercase = true; 
+                //Config.Password.RequireUppercase = true;
+                Config.User.RequireUniqueEmail = true;
+                Config.Lockout.MaxFailedAccessAttempts = 5;
+                Config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+
+            }).AddEntityFrameworkStores<GymAppContext>();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                // redirect unauthenticated users (401)
+                options.LoginPath = "/Account/Login";
+                // redirect forbidden users (403)
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });// Default Paths
 
             var app = builder.Build();
 
@@ -43,7 +65,7 @@ namespace GymSystem
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Account}/{action=Login}/{id?}");
 
             app.Run();
         }

@@ -8,10 +8,13 @@ namespace GymSystem.PL.Controllers
     {
 
         private readonly IMemberService _memberService;
+        private readonly IAttachmentService _attachmentService;
 
-        public MemberController(IMemberService memberService)
+
+        public MemberController(IMemberService memberService, IAttachmentService attachmentService)
         {
             _memberService = memberService;
+            _attachmentService = attachmentService;
         }
 
         // Get :: Member/Index => List of all members
@@ -47,6 +50,19 @@ namespace GymSystem.PL.Controllers
             return View(healthRecord);
         }
         // Add
+
+        public async Task<IActionResult> Picture(int id)
+        {
+            var member = await _memberService.GetMemberByIdAsync(id);
+            if (member is null || string.IsNullOrEmpty(member.Photo))
+                return NotFound();
+
+
+            var result = _attachmentService.GetFile(member.Photo, "MembersPictures");
+            if (result is null) return NotFound();
+
+            return File(result.Value.Stream, result.Value.ContentType);
+        }
 
         // Get :: Member/Create => Form to create a new member
         [HttpGet]

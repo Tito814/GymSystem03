@@ -28,10 +28,14 @@ namespace GymSystem.DAL.Repo.Classes
         public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression, CancellationToken ct = default)
             => _context.Set<TEntity>().AsNoTracking().AnyAsync(expression, ct);
 
+        public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default)
+            => predicate is null ? _context.Set<TEntity>().AsNoTracking().CountAsync(ct) : _context.Set<TEntity>().AsNoTracking().CountAsync(predicate, ct);
+
+
         public async void DeleteAsync(TEntity entity)
         {
             _context.Set<TEntity>().Remove(entity);
-         }
+        }
 
         public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression, bool tracking = false, CancellationToken ct = default)
         {
@@ -44,13 +48,19 @@ namespace GymSystem.DAL.Repo.Classes
             IQueryable<TEntity> query = tracking ? _context.Set<TEntity>() : _context.Set<TEntity>().AsNoTracking();
             return await query.ToListAsync(ct);
         }
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null, bool tracking = false, CancellationToken ct = default)
+        {
+            IQueryable<TEntity> query = tracking ? _context.Set<TEntity>() : _context.Set<TEntity>().AsNoTracking();
+            if (predicate is not null) query = query.Where(predicate);
+            return await query.ToListAsync(ct);
+        }
 
         public async Task<TEntity> GetByIDAsync(int id, CancellationToken ct = default)
             => await _context.Set<TEntity>().FindAsync(id, ct);
 
         public async void UpdateAsync(TEntity entity)
         {
-             _context.Set<TEntity>().Update(entity);
+            _context.Set<TEntity>().Update(entity);
         }
     }
 }

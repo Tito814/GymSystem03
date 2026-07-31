@@ -86,7 +86,7 @@ namespace GymSystem.BLL.Services.Classes
 
         public async Task<IEnumerable<CategorySelectVM>> GetCategoriesForDropDownAsync(CancellationToken ct = default)
         {
-            var categories = await _unitOfWork.GetRepo<Category>().GetAllAsync(ct: ct);
+            var categories = await _unitOfWork.GetRepo<Category>().GetAllAsync(false, ct: ct);
             return _mapper.Map<List<CategorySelectVM>>(categories); ;
         }
 
@@ -112,7 +112,7 @@ namespace GymSystem.BLL.Services.Classes
 
         public async Task<IEnumerable<TrainerSelectVM>> GetTrainersForDropDownAsync(CancellationToken ct = default)
         {
-            var trainers = await _unitOfWork.GetRepo<Trainer>().GetAllAsync(ct: ct);
+            var trainers = await _unitOfWork.GetRepo<Trainer>().GetAllAsync(false, ct: ct);
             return _mapper.Map<IEnumerable<TrainerSelectVM>>(trainers);
         }
 
